@@ -1,0 +1,1040 @@
+{
+  "name": "Atendimento",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=Você é um assistente virtual especializado em gerenciamento de consultas para o Dr. Caio.\nSua função é gerenciar as consultas com precisão, garantindo disponibilidade real e, ao mesmo tempo, proporcionando uma experiência tranquila aos pacientes.\n\nHorário do Consultório\n\nSegunda – Sexta: 9:00 AM – 23:00 PM\n\nSábado: 9:00 AM – 23:00 PM\n\nDomingo: Fechado\n\nDuração da Consulta: 1 hora\n\nIntervalo Entre Pacientes: 15 minutos\n\nProcesso de Agendamento\n\nColetar Informações do Paciente:\n\nNome Completo\n\nNúmero de Telefone\n\nEndereço de E-mail\n\nData e Horário Desejados\nSe alguma informação estiver faltando, solicite educadamente ao paciente antes de prosseguir.\n\nVerificação de Disponibilidade:\n\nUtilize sempre a ferramenta \"Check Availability\" para verificar horários livres no Google Calendar.\n\nSe o horário solicitado conflitar com um compromisso existente, sugira o próximo horário disponível.\n\nNão crie nem confirme um agendamento até que o usuário aprove explicitamente o horário.\n\nConfirmação do Agendamento:\n\nSomente crie o compromisso usando a ferramenta \"Create Event\" após a confirmação explícita do usuário.\n\nNão diga “agendamento confirmado” a menos que a ferramenta tenha sido realmente utilizada.\n\nFormato do ID do Agendamento: APT-YYYYMMDD-XXXXXX (6 caracteres alfanuméricos aleatórios).\n\nTítulo do Evento: Patient Name - Phone Number\n\nDescrição do Evento: inclua nome completo, telefone, e-mail, ID do agendamento, data e horário.\n\nFormato da Mensagem de Confirmação\n\nQuando o agendamento estiver concluído, retorne apenas esta mensagem:\n✅ Appointment Confirmed:\n\nFull Name: {full_name}\n\nPhone: {phone}\n\nEmail: {email}\n\nDate: {date}\n\nTime: {time}\n\nAppointment ID: {appointment_id}\n\nNão incluir:\n\nLinks para o evento no calendário\n\nTexto extra após o ID do agendamento\n\nQualquer confirmação sem o uso da ferramenta Create Event\n\nCancelamentos\n\nSe solicitar cancelamento, responda: \"Please check your booking email. I cannot cancel appointments for you.\"\n\nVerificação\n\nSe pedirem para verificar um agendamento pelo ID, responda: \"\"\n\nFerramentas Disponíveis\n\nCheck Availability → Verificar horários livres no Google Calendar\n\nCreate Event → Criar o compromisso confirmado no Google Calendar\n\nRegras de Comunicação\n\nSeja sempre educado, claro e amigável.\n\nNunca presuma detalhes ausentes — pergunte por eles.\n\nNunca crie ou cancele sem confirmação explícita.\n\nSiga estritamente a verificação de disponibilidade e a criação do agendamento após confirmação.\n\nToday's Date: {{ $now }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        192,
+        16
+      ],
+      "id": "32f3ca8b-36f0-470e-86c2-d2488628b7a6",
+      "name": "Secretaria"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        48,
+        288
+      ],
+      "id": "8417c951-436a-43b4-bd6d-5ec770f6d821",
+      "name": "Gemini",
+      "notesInFlow": true,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PdpefHgXzoKeIuru",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      },
+      "notes": "Modelo da Google"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "evolution",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -128,
+        -96
+      ],
+      "id": "32732419-9e6d-41ea-b51e-2a72f50a9cfa",
+      "name": "Evolution Whatsapp",
+      "webhookId": "49ec8567-0e3a-48b1-b4f5-6d9e8af5ac88",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -112,
+        112
+      ],
+      "id": "226bbfa3-709a-456d-a8e9-47997d06810c",
+      "name": "Chat N8N",
+      "webhookId": "e3b2f22f-3219-4713-b938-9ea34101a5d0",
+      "notesInFlow": true,
+      "notes": "Simula Conversa com o sistema"
+    },
+    {
+      "parameters": {
+        "resource": "calendar",
+        "calendar": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        512,
+        288
+      ],
+      "id": "5dc027b0-367f-497a-9a9d-aaca589d73bc",
+      "name": "Check Availability",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "vEBemUu87agF5N4w",
+          "name": "Google Calendar account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "kio199@gmail.com",
+          "mode": "list",
+          "cachedResultName": "Caio Ross"
+        },
+        "start": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start', ``, 'string') }}",
+        "end": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('End', ``, 'string') }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        368,
+        288
+      ],
+      "id": "0d8980f5-71fd-4150-8be7-586f4970399c",
+      "name": "Create Event",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "vEBemUu87agF5N4w",
+          "name": "Google Calendar account 2"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        208,
+        288
+      ],
+      "id": "6a15ae0c-4370-4e1c-af20-bcb5b41ba0e6",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.output }}",
+        "options": {
+          "systemMessage": "Você é um Appointment Parsing Agent.\nSua tarefa é extrair detalhes de agendamentos a partir de um texto e retornar apenas um JSON limpo.\n\n🔹 Regras\n\nSempre retorne os dados estritamente neste formato JSON:\n\n{\n\"patient\": {\n\"full_name\": \"John Doe\",\n\"phone\": \"123456789\",\n\"email\": \"john@example.com\n\"\n},\n\"appointment\": {\n\"date\": \"29th August 2025\",\n\"time\": \"5 PM\"\n},\n\"appointment_id\": \"APT20250831KY5T4N\"\n}\n\nAppointment ID:\n\nSe for fornecido, retorne exatamente como veio.\n\nNão adicione texto extra (ex.: “este é um ID único do seu agendamento”).\n\nSe não vier, gere um no formato:\n\nAPT + YYYYMMDD + 5 caracteres alfanuméricos aleatórios\n\nExemplo: APT20250831KY5T4N\n\nTodos os campos devem estar sempre presentes no JSON:\n\npatient.full_name\n\npatient.phone\n\npatient.email\n\nappointment.date\n\nappointment.time\n\nappointment_id\n\nSe algum valor estiver ausente, defina-o como \"null\" (string).\n\nSaída: apenas JSON válido. Sem explicações, sem Markdown, sem texto extra."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        608,
+        16
+      ],
+      "id": "0e632cf4-566f-41fc-ae15-19dceed00395",
+      "name": "Agente de Parsing"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get the AI Agent output (which is a JSON string)\nconst msg = $input.first().json.output || \"\";\n\nif (!msg) {\n  throw new Error(\"AI Agent output not found.\");\n}\n\n// Parse the JSON string\nlet data;\ntry {\n  data = JSON.parse(msg);\n} catch (err) {\n  throw new Error(\"Failed to parse AI Agent output as JSON: \" + err.message);\n}\n\n// Fallback Appointment ID if missing\nif (!data.appointment_id || data.appointment_id === \"null\") {\n  const randomId = Math.random().toString(36).substring(2, 8).toUpperCase();\n  data.appointment_id = `APT-${randomId}`;\n}\n\nreturn [{ json: data }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        976,
+        16
+      ],
+      "id": "5980a944-d868-4123-b083-4b079f64703c",
+      "name": "Codigo para Verificar"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "14c0a146-a2da-42f7-84bb-d7a368898de9",
+              "leftValue": "={{ $json.patient.full_name }}",
+              "rightValue": "null",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1184,
+        16
+      ],
+      "id": "79559ee2-3f9d-41e0-9be4-f53c4393e3fa",
+      "name": "Testar Nome"
+    },
+    {
+      "parameters": {
+        "sendTo": "kio199@gmail.com",
+        "subject": "Novo Agendamento Confirmado",
+        "emailType": "text",
+        "message": "=Olá Doutor Caio\nUm novo agendamento de consulta foi feito por whatsapp. \nAqui estão os detalhes do seu paciente:\n\nPaciente:\nNome:{{ $('Codigo para Verificar').item.json.patient.full_name }}\nEmail:{{ $('Codigo para Verificar').item.json.patient.email }}\nTelefone:{{ $('Codigo para Verificar').item.json.patient.phone }}\n\nConsulta:\nData:{{ $('Codigo para Verificar').item.json.appointment.date }}\nHora:{{ $('Codigo para Verificar').item.json.appointment.time }}\nLocal: Av Paulista 1234\nCodigo da Consulta:{{ $('Codigo para Verificar').item.json.appointment_id }}\n\nPor favor chegue comm 15 minutos de antecedencia\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1536,
+        -80
+      ],
+      "id": "123264d1-7e7f-4ad4-886b-c96ce7d7b188",
+      "name": "Email - Doutor",
+      "webhookId": "8292ad88-0db5-42f0-9a47-c76b44d5a672",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "qt31GWhwHmkUd2tc",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Codigo para Verificar').item.json.patient.email }}",
+        "subject": "Agendaamento Confirmado",
+        "message": "=Olá {{ $('Codigo para Verificar').item.json.patient.full_name }}\n\nSeu agendamento da consulta está confirmado para o dia {{ $('Codigo para Verificar').item.json.appointment.date }} as {{ $('Codigo para Verificar').item.json.appointment.time }}, o codigo do seu agendamento é {{ $('Codigo para Verificar').item.json.appointment_id }}\n\nNão se esqueça chegue com 15minutos de antecedencia!\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1744,
+        -80
+      ],
+      "id": "5b1dad5e-7c4e-4c28-9859-c2e1ceb25718",
+      "name": "Send a message",
+      "webhookId": "49ab2fdf-8d54-40ee-bca1-f64e91411d85",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "qt31GWhwHmkUd2tc",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "n8n_clarify",
+        "remoteJid": "5511952729677",
+        "messageText": "={{ $('Secretaria').item.json.output }}",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        2304,
+        32
+      ],
+      "id": "15e98f88-3660-49f5-b8dd-bc4d62df1bbf",
+      "name": "Responder Whatsapp",
+      "credentials": {
+        "evolutionApi": {
+          "id": "wD0HOrlTQv98yuRz",
+          "name": "Evolution account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1h0ssVmEk6oBCjDpmJMmvq9Syh4SxadqTVyKCaGicSBI",
+          "mode": "list",
+          "cachedResultName": "agendamento_hospital",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1h0ssVmEk6oBCjDpmJMmvq9Syh4SxadqTVyKCaGicSBI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Página1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1h0ssVmEk6oBCjDpmJMmvq9Syh4SxadqTVyKCaGicSBI/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Codigo": "={{ $('Codigo para Verificar').item.json.appointment_id }}",
+            "Nome": "={{ $('Codigo para Verificar').item.json.patient.full_name }}",
+            "Telefone": "={{ $('Codigo para Verificar').item.json.patient.phone }}",
+            "Email": "={{ $('Codigo para Verificar').item.json.patient.email }}",
+            "Data": "={{ $('Codigo para Verificar').item.json.appointment.date }}",
+            "Horario": "={{ $('Codigo para Verificar').item.json.appointment.time }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Codigo",
+              "displayName": "Codigo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telefone",
+              "displayName": "Telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Data",
+              "displayName": "Data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Horario",
+              "displayName": "Horario",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1952,
+        -80
+      ],
+      "id": "b60cb3de-17a8-422a-a2bb-7a582bcd4153",
+      "name": "Adicionar Registro",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "vyQHMrcmQuZyYAC7",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=Você é um assistente virtual especializado em gerenciamento de consultas para o Dr. Caio.\nSua função é gerenciar as consultas com precisão, garantindo disponibilidade real e, ao mesmo tempo, proporcionando uma experiência tranquila aos pacientes.\n\nHorário do Consultório\n\nSegunda – Sexta: 9:00 AM – 23:00 PM\n\nSábado: 9:00 AM – 23:00 PM\n\nDomingo: Fechado\n\nDuração da Consulta: 1 hora\n\nIntervalo Entre Pacientes: 15 minutos\n\nProcesso de Agendamento\n\nColetar Informações do Paciente:\n\nNome Completo\n\nNúmero de Telefone\n\nEndereço de E-mail\n\nData e Horário Desejados\nSe alguma informação estiver faltando, solicite educadamente ao paciente antes de prosseguir.\n\nVerificação de Disponibilidade:\n\nUtilize sempre a ferramenta \"Check Availability\" para verificar horários livres no Google Calendar.\n\nSe o horário solicitado conflitar com um compromisso existente, sugira o próximo horário disponível.\n\nNão crie nem confirme um agendamento até que o usuário aprove explicitamente o horário.\n\nConfirmação do Agendamento:\n\nSomente crie o compromisso usando a ferramenta \"Create Event\" após a confirmação explícita do usuário.\n\nNão diga “agendamento confirmado” a menos que a ferramenta tenha sido realmente utilizada.\n\nFormato do ID do Agendamento: APT-YYYYMMDD-XXXXXX (6 caracteres alfanuméricos aleatórios).\n\nTítulo do Evento: Patient Name - Phone Number\n\nDescrição do Evento: inclua nome completo, telefone, e-mail, ID do agendamento, data e horário.\n\nFormato da Mensagem de Confirmação\n\nQuando o agendamento estiver concluído, retorne apenas esta mensagem:\n✅ Appointment Confirmed:\n\nFull Name: {full_name}\n\nPhone: {phone}\n\nEmail: {email}\n\nDate: {date}\n\nTime: {time}\n\nAppointment ID: {appointment_id}\n\nNão incluir:\n\nLinks para o evento no calendário\n\nTexto extra após o ID do agendamento\n\nQualquer confirmação sem o uso da ferramenta Create Event\n\nCancelamentos\n\nSe solicitar cancelamento, responda: \"Please check your booking email. I cannot cancel appointments for you.\"\n\nVerificação\n\nSe pedirem para verificar um agendamento pelo ID, responda: \"\"\n\nFerramentas Disponíveis\n\nCheck Availability → Verificar horários livres no Google Calendar\n\nCreate Event → Criar o compromisso confirmado no Google Calendar\n\nRegras de Comunicação\n\nSeja sempre educado, claro e amigável.\n\nNunca presuma detalhes ausentes — pergunte por eles.\n\nNunca crie ou cancele sem confirmação explícita.\n\nSiga estritamente a verificação de disponibilidade e a criação do agendamento após confirmação.\n\nToday's Date: {{ $now }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        2192,
+        928
+      ],
+      "id": "1bcc8fc2-0143-4e80-848c-1beb37a95e29",
+      "name": "Secretaria1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        2048,
+        1200
+      ],
+      "id": "17b6ab85-d335-49fd-aa38-e499d55ce14f",
+      "name": "Gemini1",
+      "notesInFlow": true,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PdpefHgXzoKeIuru",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      },
+      "notes": "Modelo da Google"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "evolution",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        1872,
+        816
+      ],
+      "id": "dd39f520-e408-4be0-9015-95854ca742ca",
+      "name": "Evolution Whatsapp1",
+      "webhookId": "49ec8567-0e3a-48b1-b4f5-6d9e8af5ac88",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "resource": "calendar",
+        "calendar": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        2512,
+        1200
+      ],
+      "id": "e9c23b7e-6768-42f6-9a24-2a254ceb76d3",
+      "name": "Check Availability1",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "vEBemUu87agF5N4w",
+          "name": "Google Calendar account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "kio199@gmail.com",
+          "mode": "list",
+          "cachedResultName": "Caio Ross"
+        },
+        "start": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start', ``, 'string') }}",
+        "end": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('End', ``, 'string') }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        2368,
+        1200
+      ],
+      "id": "f5a59065-b061-4e99-b4c7-92e8b3d33de8",
+      "name": "Create Event1",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "vEBemUu87agF5N4w",
+          "name": "Google Calendar account 2"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        2208,
+        1200
+      ],
+      "id": "7fff8d4d-285a-442e-91cd-4d4b45921584",
+      "name": "Simple Memory1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.output }}",
+        "options": {
+          "systemMessage": "Você é um Appointment Parsing Agent.\nSua tarefa é extrair detalhes de agendamentos a partir de um texto e retornar apenas um JSON limpo.\n\n🔹 Regras\n\nSempre retorne os dados estritamente neste formato JSON:\n\n{\n\"patient\": {\n\"full_name\": \"John Doe\",\n\"phone\": \"123456789\",\n\"email\": \"john@example.com\n\"\n},\n\"appointment\": {\n\"date\": \"29th August 2025\",\n\"time\": \"5 PM\"\n},\n\"appointment_id\": \"APT20250831KY5T4N\"\n}\n\nAppointment ID:\n\nSe for fornecido, retorne exatamente como veio.\n\nNão adicione texto extra (ex.: “este é um ID único do seu agendamento”).\n\nSe não vier, gere um no formato:\n\nAPT + YYYYMMDD + 5 caracteres alfanuméricos aleatórios\n\nExemplo: APT20250831KY5T4N\n\nTodos os campos devem estar sempre presentes no JSON:\n\npatient.full_name\n\npatient.phone\n\npatient.email\n\nappointment.date\n\nappointment.time\n\nappointment_id\n\nSe algum valor estiver ausente, defina-o como \"null\" (string).\n\nSaída: apenas JSON válido. Sem explicações, sem Markdown, sem texto extra."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        2608,
+        928
+      ],
+      "id": "d2a75489-7ab1-495a-81ce-69842aa47fb5",
+      "name": "Agente de Parsing1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get the AI Agent output (which is a JSON string)\nconst msg = $input.first().json.output || \"\";\n\nif (!msg) {\n  throw new Error(\"AI Agent output not found.\");\n}\n\n// Parse the JSON string\nlet data;\ntry {\n  data = JSON.parse(msg);\n} catch (err) {\n  throw new Error(\"Failed to parse AI Agent output as JSON: \" + err.message);\n}\n\n// Fallback Appointment ID if missing\nif (!data.appointment_id || data.appointment_id === \"null\") {\n  const randomId = Math.random().toString(36).substring(2, 8).toUpperCase();\n  data.appointment_id = `APT-${randomId}`;\n}\n\nreturn [{ json: data }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2976,
+        928
+      ],
+      "id": "6753edc0-104c-4a51-820a-c399806bd1b0",
+      "name": "Codigo para Verificar1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "14c0a146-a2da-42f7-84bb-d7a368898de9",
+              "leftValue": "={{ $json.patient.full_name }}",
+              "rightValue": "null",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3184,
+        928
+      ],
+      "id": "61010af5-65db-4d79-bef5-caf8850fe053",
+      "name": "Testar Nome1"
+    },
+    {
+      "parameters": {
+        "sendTo": "kio199@gmail.com",
+        "subject": "Novo Agendamento Confirmado",
+        "emailType": "text",
+        "message": "=Olá Doutor Caio\nUm novo agendamento de consulta foi feito por whatsapp. \nAqui estão os detalhes do seu paciente:\n\nPaciente:\nNome:{{ $('Codigo para Verificar1').item.json.patient.full_name }}\nEmail:{{ $('Codigo para Verificar1').item.json.patient.email }}\nTelefone:{{ $('Codigo para Verificar1').item.json.patient.phone }}\n\nConsulta:\nData:{{ $('Codigo para Verificar1').item.json.appointment.date }}\nHora:{{ $('Codigo para Verificar1').item.json.appointment.time }}\nLocal: Av Paulista 1234\nCodigo da Consulta:{{ $('Codigo para Verificar1').item.json.appointment_id }}\n\nPor favor chegue comm 15 minutos de antecedencia\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        3536,
+        832
+      ],
+      "id": "37b737b4-e89b-4be2-8046-c1b569f0b0c1",
+      "name": "Email - Doutor1",
+      "webhookId": "8292ad88-0db5-42f0-9a47-c76b44d5a672",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "qt31GWhwHmkUd2tc",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Codigo para Verificar1').item.json.patient.email }}",
+        "subject": "Agendaamento Confirmado",
+        "message": "=Olá {{ $('Codigo para Verificar1').item.json.patient.full_name }}\n\nSeu agendamento da consulta está confirmado para o dia {{ $('Codigo para Verificar1').item.json.appointment.date }} as {{ $('Codigo para Verificar1').item.json.appointment.time }}, o codigo do seu agendamento é {{ $('Codigo para Verificar1').item.json.appointment_id }}\n\nNão se esqueça chegue com 15minutos de antecedencia!\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        3744,
+        832
+      ],
+      "id": "34994f10-984e-4dbc-9da2-783bb5125e27",
+      "name": "Send a message1",
+      "webhookId": "49ab2fdf-8d54-40ee-bca1-f64e91411d85",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "qt31GWhwHmkUd2tc",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "n8n_clarify",
+        "remoteJid": "5511952729677",
+        "messageText": "={{ $('Secretaria1').item.json.output }}",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        4304,
+        944
+      ],
+      "id": "187efb6b-aa72-4d53-9c82-78497ccf332a",
+      "name": "Responder Whatsapp1",
+      "credentials": {
+        "evolutionApi": {
+          "id": "wD0HOrlTQv98yuRz",
+          "name": "Evolution account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1h0ssVmEk6oBCjDpmJMmvq9Syh4SxadqTVyKCaGicSBI",
+          "mode": "list",
+          "cachedResultName": "agendamento_hospital",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1h0ssVmEk6oBCjDpmJMmvq9Syh4SxadqTVyKCaGicSBI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Página1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1h0ssVmEk6oBCjDpmJMmvq9Syh4SxadqTVyKCaGicSBI/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Codigo": "={{ $('Codigo para Verificar1').item.json.appointment_id }}",
+            "Nome": "={{ $('Codigo para Verificar1').item.json.patient.full_name }}",
+            "Telefone": "={{ $('Codigo para Verificar1').item.json.patient.phone }}",
+            "Email": "={{ $('Codigo para Verificar1').item.json.patient.email }}",
+            "Data": "={{ $('Codigo para Verificar1').item.json.appointment.date }}",
+            "Horario": "={{ $('Codigo para Verificar1').item.json.appointment.time }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Codigo",
+              "displayName": "Codigo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telefone",
+              "displayName": "Telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Data",
+              "displayName": "Data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Horario",
+              "displayName": "Horario",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        3952,
+        832
+      ],
+      "id": "9e3c68d9-a8f2-491d-a98f-a8c76411ba28",
+      "name": "Adicionar Registro1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "vyQHMrcmQuZyYAC7",
+          "name": "Google Sheets account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gemini": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Secretaria",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Agente de Parsing",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Evolution Whatsapp": {
+      "main": [
+        [
+          {
+            "node": "Secretaria",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chat N8N": {
+      "main": [
+        [
+          {
+            "node": "Secretaria",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Availability": {
+      "ai_tool": [
+        [
+          {
+            "node": "Secretaria",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Event": {
+      "ai_tool": [
+        [
+          {
+            "node": "Secretaria",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Secretaria",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Secretaria": {
+      "main": [
+        [
+          {
+            "node": "Agente de Parsing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agente de Parsing": {
+      "main": [
+        [
+          {
+            "node": "Codigo para Verificar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Codigo para Verificar": {
+      "main": [
+        [
+          {
+            "node": "Testar Nome",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Testar Nome": {
+      "main": [
+        [
+          {
+            "node": "Email - Doutor",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Responder Whatsapp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email - Doutor": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Adicionar Registro",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Adicionar Registro": {
+      "main": [
+        [
+          {
+            "node": "Responder Whatsapp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Secretaria1": {
+      "main": [
+        [
+          {
+            "node": "Agente de Parsing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Secretaria1",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Agente de Parsing1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Evolution Whatsapp1": {
+      "main": [
+        [
+          {
+            "node": "Secretaria1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Availability1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Secretaria1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Event1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Secretaria1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "Secretaria1",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agente de Parsing1": {
+      "main": [
+        [
+          {
+            "node": "Codigo para Verificar1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Codigo para Verificar1": {
+      "main": [
+        [
+          {
+            "node": "Testar Nome1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Testar Nome1": {
+      "main": [
+        [
+          {
+            "node": "Email - Doutor1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Responder Whatsapp1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email - Doutor1": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message1": {
+      "main": [
+        [
+          {
+            "node": "Adicionar Registro1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Adicionar Registro1": {
+      "main": [
+        [
+          {
+            "node": "Responder Whatsapp1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "80212a7e-1e34-4a37-bbbc-27580fed0d61",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "532e36832cfe02bbd2b34afb06978276a51f6860b79a34e572fb971cf4676846"
+  },
+  "id": "ZKmzrqahYgiH6RdV",
+  "tags": []
+}
